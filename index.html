@@ -9,519 +9,405 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-  :root {
-    --gold: #C6A34E;
-    --gold-light: #D4B66A;
-    --gold-dim: rgba(198, 163, 78, 0.15);
-    --black: #0A0A0A;
-    --grey: #888;
-    --white: #F0EDE6;
+body {
+  background: #0A0A0A;
+  color: #F0EDE6;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== VIDEO ===== */
+.video-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem 0;
+  opacity: 0;
+  animation: fadeIn 2s ease-out 0.3s forwards;
+}
+
+.video-frame {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  overflow: hidden;
+  border: 1px solid rgba(198,163,78,0.12);
+}
+
+.video-frame video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.video-fade {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, #0A0A0A);
+  pointer-events: none;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.5rem 5rem;
+}
+
+/* ===== BELL ===== */
+.bell-wrap {
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeIn 2s ease-out 0.8s forwards;
+}
+
+#bell-element {
+  display: block;
+  width: 80px;
+  height: 100px;
+  transform-origin: top center;
+  animation: sway 5s ease-in-out infinite;
+}
+
+#bell-element.ringing {
+  animation: ring 0.25s ease-in-out 8 !important;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(2.5deg); }
+  75% { transform: rotate(-2.5deg); }
+}
+
+@keyframes ring {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  75% { transform: rotate(-15deg); }
+}
+
+/* ===== BRAND TEXT ===== */
+.brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(2.5rem, 12vw, 5.5rem);
+  letter-spacing: 0.3em;
+  margin-bottom: 1.2rem;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out 1.2s forwards;
+  min-height: 1.2em;
+}
+
+.brand span {
+  display: inline-block;
+  min-width: 0.55em;
+  text-align: center;
+  color: rgba(198,163,78,0.35);
+  transition: color 0.4s ease;
+}
+
+.brand span.done { color: #F0EDE6; }
+.brand span.gap { min-width: 0.3em; }
+
+/* ===== TAGLINE ===== */
+.tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(0.85rem, 3vw, 1.1rem);
+  letter-spacing: 0.12em;
+  color: #C6A34E;
+  margin-bottom: 0.5rem;
+  opacity: 0;
+  animation: fadeIn 1.5s ease-out 2s forwards;
+}
+
+.divider {
+  width: 30px;
+  height: 1px;
+  background: rgba(198,163,78,0.2);
+  margin: 0 auto 2rem;
+  opacity: 0;
+  animation: fadeIn 1.5s ease-out 2.2s forwards;
+}
+
+.coming {
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #888;
+  font-weight: 200;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeIn 1.5s ease-out 2.4s forwards;
+}
+
+/* ===== FORM ===== */
+.form-box {
+  width: 100%;
+  max-width: 380px;
+  opacity: 0;
+  animation: fadeUp 1.5s ease-out 2.8s forwards;
+}
+
+.form-row {
+  display: flex;
+  border: 1px solid rgba(198,163,78,0.25);
+  transition: border-color 0.3s ease;
+}
+
+.form-row:focus-within { border-color: #C6A34E; }
+
+.form-row input {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  background: transparent;
+  border: none;
+  color: #F0EDE6;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.form-row input::placeholder { color: rgba(208,208,208,0.25); }
+
+.form-row button {
+  padding: 0.85rem 1.2rem;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(198,163,78,0.25);
+  color: #C6A34E;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  white-space: nowrap;
+}
+
+.form-row button:hover { background: rgba(198,163,78,0.08); }
+.form-row button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.msg {
+  margin-top: 0.8rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  min-height: 1.2rem;
+}
+
+.msg.ok { color: #C6A34E; }
+.msg.err { color: #8B4444; }
+
+/* ===== BOTTOM ===== */
+.bottom {
+  text-align: center;
+  padding: 0 1rem 2.5rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(136,136,136,0.35);
+  font-weight: 200;
+  opacity: 0;
+  animation: fadeIn 1.5s ease-out 3.2s forwards;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 480px) {
+  .video-section { padding: 1rem 0 0; }
+  .video-frame { border: none; }
+  .brand { letter-spacing: 0.2em; }
+  .form-row { flex-direction: column; }
+  .form-row button {
+    border-left: none;
+    border-top: 1px solid rgba(198,163,78,0.25);
+    padding: 0.9rem;
   }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'Outfit', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-  }
-
-  /* Grain */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-  }
-
-  /* ===== HERO VIDEO ===== */
-  .hero-video-wrapper {
-    position: relative;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding-top: 3rem;
-    opacity: 0;
-    animation: fadeIn 2s ease-out 0.3s forwards;
-  }
-
-  .hero-video-frame {
-    position: relative;
-    width: min(85vw, 560px);
-    border-radius: 2px;
-    overflow: hidden;
-    border: 1px solid rgba(198, 163, 78, 0.12);
-  }
-
-  .hero-video-frame::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6);
-    pointer-events: none;
-  }
-
-  .hero-video {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-  }
-
-  /* Fade edges into black */
-  .hero-video-fade {
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    right: 0;
-    height: 80px;
-    background: linear-gradient(to bottom, transparent, var(--black));
-    pointer-events: none;
-  }
-
-  /* ===== CONTENT ===== */
-  .content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 1rem 2rem 6rem;
-    margin-top: -20px;
-  }
-
-  /* ===== BELL ===== */
-  .bell-container {
-    margin-bottom: 2.5rem;
-    opacity: 0;
-    animation: fadeIn 2s ease-out 1s forwards;
-    cursor: default;
-  }
-
-  .bell-svg {
-    width: 90px;
-    height: auto;
-    filter: drop-shadow(0 0 30px rgba(198, 163, 78, 0.35));
-    transition: filter 0.3s ease;
-  }
-
-  .bell-svg .bell-body {
-    fill: rgba(198, 163, 78, 0.08);
-    stroke: var(--gold);
-    stroke-width: 1.8;
-  }
-
-  .bell-svg .bell-clapper { fill: var(--gold); }
-
-  /* Gentle idle sway */
-  .bell-idle {
-    transform-origin: 25px 5px;
-    animation: idleSway 5s ease-in-out infinite;
-  }
-
-  @keyframes idleSway {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(2deg); }
-    75% { transform: rotate(-2deg); }
-  }
-
-  /* Ringing animation — triggered on signup */
-  .bell-ringing {
-    animation: ringBell 0.3s ease-in-out 6 !important;
-  }
-
-  @keyframes ringBell {
-    0%, 100% { transform: rotate(0deg); }
-    20% { transform: rotate(14deg); }
-    40% { transform: rotate(-12deg); }
-    60% { transform: rotate(10deg); }
-    80% { transform: rotate(-8deg); }
-  }
-
-  .bell-ringing .bell-svg {
-    filter: drop-shadow(0 0 40px rgba(198, 163, 78, 0.6));
-  }
-
-  /* ===== BRAND ===== */
-  .brand {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    font-size: clamp(2.8rem, 10vw, 5.5rem);
-    letter-spacing: 0.4em;
-    color: var(--white);
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeIn 0.5s ease-out 1.2s forwards;
-    text-indent: 0.4em;
-    min-height: 1.2em;
-  }
-
-  .brand span {
-    display: inline-block;
-    min-width: 0.6em;
-    text-align: center;
-    color: rgba(198, 163, 78, 0.3);
-    transition: color 0.4s ease;
-  }
-
-  .brand span.decoded {
-    color: var(--white);
-  }
-
-  .brand span.space {
-    min-width: 0.35em;
-  }
-
-  .tagline {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    font-style: italic;
-    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
-    letter-spacing: 0.15em;
-    color: var(--gold);
-    margin-bottom: 0.6rem;
-    opacity: 0;
-    animation: fadeIn 1.5s ease-out 2s forwards;
-  }
-
-  .tagline-divider {
-    width: 30px;
-    height: 1px;
-    background: var(--gold-dim);
-    margin: 0 auto 2.5rem;
-    opacity: 0;
-    animation: fadeIn 1.5s ease-out 2.2s forwards;
-  }
-
-  .coming {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 200;
-    font-size: 0.75rem;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--grey);
-    margin-bottom: 3rem;
-    opacity: 0;
-    animation: fadeIn 1.5s ease-out 2.4s forwards;
-  }
-
-  /* ===== FORM ===== */
-  .form-container {
-    opacity: 0;
-    animation: fadeUp 1.5s ease-out 2.8s forwards;
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .form-wrapper {
-    display: flex;
-    gap: 0;
-    border: 1px solid rgba(198, 163, 78, 0.25);
-    overflow: hidden;
-    transition: border-color 0.4s ease;
-  }
-
-  .form-wrapper:focus-within { border-color: var(--gold); }
-
-  .email-input {
-    flex: 1;
-    padding: 0.9rem 1.2rem;
-    background: transparent;
-    border: none;
-    color: var(--white);
-    font-family: 'Outfit', sans-serif;
-    font-weight: 300;
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-    outline: none;
-  }
-
-  .email-input::placeholder {
-    color: rgba(208, 208, 208, 0.3);
-    letter-spacing: 0.08em;
-  }
-
-  .submit-btn {
-    padding: 0.9rem 1.6rem;
-    background: transparent;
-    border: none;
-    border-left: 1px solid rgba(198, 163, 78, 0.25);
-    color: var(--gold);
-    font-family: 'Outfit', sans-serif;
-    font-weight: 300;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.4s ease;
-    white-space: nowrap;
-  }
-
-  .submit-btn:hover {
-    background: rgba(198, 163, 78, 0.08);
-    color: var(--gold-light);
-  }
-
-  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .form-message {
-    margin-top: 1rem;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    min-height: 1.2rem;
-  }
-
-  .form-message.success { color: var(--gold); }
-  .form-message.error { color: #8B4444; }
-
-  /* ===== BOTTOM ===== */
-  .bottom-mark {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Outfit', sans-serif;
-    font-weight: 200;
-    font-size: 0.6rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: rgba(136, 136, 136, 0.3);
-    opacity: 0;
-    animation: fadeIn 1.5s ease-out 3.4s forwards;
-    z-index: 1;
-  }
-
-  .bottom-mark a {
-    color: rgba(136, 136, 136, 0.3);
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-
-  .bottom-mark a:hover { color: rgba(198, 163, 78, 0.4); }
-
-  /* Decorative lines */
-  .crack {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 1px;
-    height: 60px;
-    background: linear-gradient(to bottom, transparent, rgba(198, 163, 78, 0.1), transparent);
-    opacity: 0;
-    animation: fadeIn 2s ease-out 3s forwards;
-    z-index: 1;
-  }
-
-  .crack-bottom {
-    top: auto;
-    bottom: 0;
-    background: linear-gradient(to top, transparent, rgba(198, 163, 78, 0.1), transparent);
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @media (max-width: 500px) {
-    .brand { letter-spacing: 0.25em; text-indent: 0.25em; }
-    .hero-video-frame { width: 92vw; }
-    .form-wrapper { flex-direction: column; }
-    .submit-btn {
-      border-left: none;
-      border-top: 1px solid rgba(198, 163, 78, 0.25);
-      padding: 1rem;
-    }
-  }
+  .main { padding: 1.5rem 1.2rem 4rem; }
+}
 </style>
 </head>
 <body>
 
-<div class="crack"></div>
-<div class="crack crack-bottom"></div>
-
-<!-- HERO VIDEO -->
-<div class="hero-video-wrapper">
-  <div class="hero-video-frame">
-    <video class="hero-video" autoplay muted loop playsinline>
+<!-- VIDEO -->
+<div class="video-section">
+  <div class="video-frame">
+    <video autoplay muted loop playsinline>
       <source src="hlyful-hero.mp4" type="video/mp4">
     </video>
-    <div class="hero-video-fade"></div>
+    <div class="video-fade"></div>
   </div>
 </div>
 
-<!-- CONTENT -->
-<div class="content">
+<!-- MAIN -->
+<div class="main">
 
-  <!-- BELL -->
-  <div class="bell-container bell-idle" id="bell">
-    <svg class="bell-svg" viewBox="0 0 50 65" xmlns="http://www.w3.org/2000/svg">
-      <!-- Suspension ring -->
-      <circle cx="25" cy="5" r="3" class="bell-body"/>
-      <!-- Stem -->
-      <line x1="25" y1="8" x2="25" y2="14" class="bell-body"/>
-      <!-- Bell body -->
-      <path d="M15 14 Q14 14 12 30 Q10 42 7 48 L43 48 Q40 42 38 30 Q36 14 35 14 Z" class="bell-body"/>
-      <!-- Rim -->
-      <ellipse cx="25" cy="48" rx="18" ry="3.5" class="bell-body"/>
-      <!-- Clapper -->
-      <circle cx="25" cy="53" r="3" class="bell-clapper"/>
-      <!-- Crack -->
-      <path d="M22 20 L24 28 L21 35 L23 43" fill="none" stroke="#C6A34E" stroke-width="0.7" opacity="0.5"/>
+  <!-- BELL — simple shapes only, inline colors, no CSS classes -->
+  <div class="bell-wrap">
+    <svg id="bell-element" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Hook at top -->
+      <circle cx="40" cy="8" r="5" fill="none" stroke="#C6A34E" stroke-width="2"/>
+      <!-- Connector -->
+      <rect x="38" y="13" width="4" height="10" rx="1" fill="#C6A34E"/>
+      <!-- Bell body — simple trapezoid shape -->
+      <polygon points="20,70 60,70 52,23 28,23" fill="rgba(198,163,78,0.1)" stroke="#C6A34E" stroke-width="2" stroke-linejoin="round"/>
+      <!-- Rounded bottom of bell -->
+      <ellipse cx="40" cy="70" rx="20" ry="5" fill="rgba(198,163,78,0.1)" stroke="#C6A34E" stroke-width="2"/>
+      <!-- Clapper rod -->
+      <rect x="39" y="55" width="2" height="22" fill="#C6A34E"/>
+      <!-- Clapper ball -->
+      <circle cx="40" cy="80" r="4" fill="#C6A34E"/>
+      <!-- Crack line -->
+      <polyline points="36,32 38,42 34,52 37,62" fill="none" stroke="#C6A34E" stroke-width="0.8" opacity="0.35"/>
     </svg>
   </div>
 
-  <h1 class="brand" id="brand-text"></h1>
+  <!-- BRAND -->
+  <h1 class="brand" id="brand"></h1>
 
+  <!-- TAGLINE -->
   <p class="tagline">Holy Fool. Heilig voll.</p>
-  <div class="tagline-divider"></div>
-
+  <div class="divider"></div>
   <p class="coming">Coming Soon</p>
 
-  <div class="form-container">
-    <form class="form-wrapper" id="newsletter-form" onsubmit="return handleSubmit(event)">
-      <input type="email" class="email-input" id="email-input" placeholder="Deine E-Mail" required autocomplete="email">
-      <button type="submit" class="submit-btn" id="submit-btn">Erfahre es zuerst</button>
-    </form>
-    <p class="form-message" id="form-message"></p>
+  <!-- FORM -->
+  <div class="form-box">
+    <div class="form-row" id="form">
+      <input type="email" id="email" placeholder="Deine E-Mail" required>
+      <button type="button" id="btn" onclick="submit()">Erfahre es zuerst</button>
+    </div>
+    <p class="msg" id="msg"></p>
   </div>
 
 </div>
 
-<div class="bottom-mark">Wer hier landet, war nie verloren.</div>
+<div class="bottom">Wer hier landet, war nie verloren.</div>
 
 <script>
-const bell = document.getElementById('bell');
-
-function ringBell() {
-  bell.classList.remove('bell-idle');
-  bell.classList.add('bell-ringing');
-  setTimeout(() => {
-    bell.classList.remove('bell-ringing');
-    bell.classList.add('bell-idle');
-  }, 2000);
-}
-
 // ===== SCRAMBLE DECODE =====
-(function() {
-  const target = 'HLY FUL';
-  const el = document.getElementById('brand-text');
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const scrambleSpeed = 55;       // ms between letter swaps
-  const startDelay = 1400;        // wait for fadeIn
-  const staggerPerChar = 400;     // ms delay between each char locking
-  const cyclesBeforeLock = 8;     // how many random letters before decode
+(function(){
+  var word = 'HLY FUL';
+  var el = document.getElementById('brand');
+  var abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  var spans = [];
 
-  // Build spans
-  const spans = [];
-  for (let i = 0; i < target.length; i++) {
-    const span = document.createElement('span');
-    if (target[i] === ' ') {
-      span.classList.add('space');
-      span.innerHTML = '&nbsp;';
-      span.dataset.done = 'true';
+  for (var i = 0; i < word.length; i++) {
+    var s = document.createElement('span');
+    if (word[i] === ' ') {
+      s.className = 'gap';
+      s.innerHTML = '\u00A0';
+      s.setAttribute('data-done', '1');
     } else {
-      span.textContent = chars[Math.floor(Math.random() * chars.length)];
-      span.dataset.done = 'false';
-      span.dataset.target = target[i];
-      span.dataset.cycles = '0';
+      s.textContent = abc[Math.floor(Math.random() * 26)];
+      s.setAttribute('data-done', '0');
+      s.setAttribute('data-char', word[i]);
+      s.setAttribute('data-n', '0');
     }
-    spans.push(span);
-    el.appendChild(span);
+    spans.push(s);
+    el.appendChild(s);
   }
 
-  // Start scrambling after delay
-  setTimeout(() => {
-    const interval = setInterval(() => {
-      let allDone = true;
-
-      spans.forEach((span, i) => {
-        if (span.dataset.done === 'true') return;
-
-        const lockAfter = cyclesBeforeLock + Math.floor(i * (staggerPerChar / scrambleSpeed));
-        const cycles = parseInt(span.dataset.cycles) + 1;
-        span.dataset.cycles = cycles;
-
-        if (cycles >= lockAfter) {
-          span.textContent = span.dataset.target;
-          span.classList.add('decoded');
-          span.dataset.done = 'true';
+  setTimeout(function(){
+    var timer = setInterval(function(){
+      var allDone = true;
+      for (var i = 0; i < spans.length; i++) {
+        if (spans[i].getAttribute('data-done') === '1') continue;
+        var n = parseInt(spans[i].getAttribute('data-n')) + 1;
+        spans[i].setAttribute('data-n', n);
+        var lock = 8 + i * 7;
+        if (n >= lock) {
+          spans[i].textContent = spans[i].getAttribute('data-char');
+          spans[i].className = 'done';
+          spans[i].setAttribute('data-done', '1');
         } else {
-          span.textContent = chars[Math.floor(Math.random() * chars.length)];
+          spans[i].textContent = abc[Math.floor(Math.random() * 26)];
           allDone = false;
         }
-      });
-
-      if (allDone) clearInterval(interval);
-    }, scrambleSpeed);
-  }, startDelay);
+      }
+      if (allDone) clearInterval(timer);
+    }, 55);
+  }, 1400);
 })();
 
-async function handleSubmit(e) {
-  e.preventDefault();
-  const email = document.getElementById('email-input').value.trim();
-  const btn = document.getElementById('submit-btn');
-  const msg = document.getElementById('form-message');
+// ===== BELL RING =====
+function ringTheBell() {
+  var b = document.getElementById('bell-element');
+  b.classList.add('ringing');
+  setTimeout(function(){ b.classList.remove('ringing'); }, 2200);
+}
+
+// ===== FORM SUBMIT =====
+function submit() {
+  var email = document.getElementById('email').value.trim();
+  var btn = document.getElementById('btn');
+  var msg = document.getElementById('msg');
   if (!email) return;
 
   btn.disabled = true;
   btn.textContent = '...';
   msg.textContent = '';
-  msg.className = 'form-message';
+  msg.className = 'msg';
 
-  try {
-    const response = await fetch('https://api.brevo.com/v3/contacts', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'api-key': 'DEIN_BREVO_API_KEY'
-      },
-      body: JSON.stringify({
-        email: email,
-        listIds: [DEINE_LIST_ID],
-        attributes: { BRAND: 'HLY FUL', SOURCE: 'coming-soon' },
-        updateEnabled: true
-      })
-    });
-
-    if (response.ok || response.status === 201 || response.status === 204) {
+  fetch('https://api.brevo.com/v3/contacts', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'api-key': 'DEIN_BREVO_API_KEY'
+    },
+    body: JSON.stringify({
+      email: email,
+      listIds: [DEINE_LIST_ID],
+      attributes: { BRAND: 'HLY FUL', SOURCE: 'coming-soon' },
+      updateEnabled: true
+    })
+  })
+  .then(function(r) {
+    if (r.ok || r.status === 201 || r.status === 204) {
       msg.textContent = 'Der Narr merkt sich das.';
-      msg.className = 'form-message success';
-      document.getElementById('email-input').value = '';
-      ringBell();
+      msg.className = 'msg ok';
+      document.getElementById('email').value = '';
+      ringTheBell();
     } else {
-      const data = await response.json();
-      if (data.code === 'duplicate_parameter') {
-        msg.textContent = 'Du bist bereits dabei.';
-        msg.className = 'form-message success';
-        ringBell();
-      } else { throw new Error(data.message || 'Fehler'); }
+      return r.json().then(function(d) {
+        if (d.code === 'duplicate_parameter') {
+          msg.textContent = 'Du bist bereits dabei.';
+          msg.className = 'msg ok';
+          ringTheBell();
+        } else {
+          throw new Error(d.message);
+        }
+      });
     }
-  } catch (err) {
+  })
+  .catch(function() {
     msg.textContent = 'Etwas ging schief. Versuch es nochmal.';
-    msg.className = 'form-message error';
-  } finally {
+    msg.className = 'msg err';
+  })
+  .finally(function() {
     btn.disabled = false;
     btn.textContent = 'Erfahre es zuerst';
-  }
+  });
 }
 </script>
-
 </body>
 </html>
