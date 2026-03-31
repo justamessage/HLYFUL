@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HLY FUL</title>
+<meta name="description" content="Holy Fool. Heilig voll.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #C6A34E;
+    --gold-light: #D4B66A;
+    --gold-dim: rgba(198, 163, 78, 0.15);
+    --black: #0A0A0A;
+    --grey: #888;
+    --white: #F0EDE6;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Grain */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ===== HERO VIDEO ===== */
+  .hero-video-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 3rem;
+    opacity: 0;
+    animation: fadeIn 2s ease-out 0.3s forwards;
+  }
+
+  .hero-video-frame {
+    position: relative;
+    width: min(85vw, 560px);
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid rgba(198, 163, 78, 0.12);
+  }
+
+  .hero-video-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6);
+    pointer-events: none;
+  }
+
+  .hero-video {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* Fade edges into black */
+  .hero-video-fade {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--black));
+    pointer-events: none;
+  }
+
+  /* ===== CONTENT ===== */
+  .content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2.5rem 2rem 6rem;
+  }
+
+  /* ===== BELL ===== */
+  .bell-container {
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeIn 2s ease-out 1s forwards;
+    cursor: default;
+  }
+
+  .bell-svg {
+    width: 50px;
+    height: auto;
+    filter: drop-shadow(0 0 15px rgba(198, 163, 78, 0.15));
+    transition: filter 0.3s ease;
+  }
+
+  .bell-svg .bell-body {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 1.5;
+  }
+
+  .bell-svg .bell-clapper { fill: var(--gold); }
+
+  /* Gentle idle sway */
+  .bell-idle {
+    transform-origin: 25px 5px;
+    animation: idleSway 5s ease-in-out infinite;
+  }
+
+  @keyframes idleSway {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(2deg); }
+    75% { transform: rotate(-2deg); }
+  }
+
+  /* Ringing animation — triggered on signup */
+  .bell-ringing {
+    animation: ringBell 0.3s ease-in-out 6 !important;
+  }
+
+  @keyframes ringBell {
+    0%, 100% { transform: rotate(0deg); }
+    20% { transform: rotate(14deg); }
+    40% { transform: rotate(-12deg); }
+    60% { transform: rotate(10deg); }
+    80% { transform: rotate(-8deg); }
+  }
+
+  .bell-ringing .bell-svg {
+    filter: drop-shadow(0 0 25px rgba(198, 163, 78, 0.4));
+  }
+
+  /* ===== BRAND ===== */
+  .brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2.8rem, 10vw, 5.5rem);
+    letter-spacing: 0.4em;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1.5s ease-out 1.4s forwards;
+    text-indent: 0.4em;
+  }
+
+  .tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+    opacity: 0;
+    animation: fadeIn 1.5s ease-out 2s forwards;
+  }
+
+  .tagline-divider {
+    width: 30px;
+    height: 1px;
+    background: var(--gold-dim);
+    margin: 0 auto 2.5rem;
+    opacity: 0;
+    animation: fadeIn 1.5s ease-out 2.2s forwards;
+  }
+
+  .coming {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 200;
+    font-size: 0.75rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeIn 1.5s ease-out 2.4s forwards;
+  }
+
+  /* ===== FORM ===== */
+  .form-container {
+    opacity: 0;
+    animation: fadeUp 1.5s ease-out 2.8s forwards;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .form-wrapper {
+    display: flex;
+    gap: 0;
+    border: 1px solid rgba(198, 163, 78, 0.25);
+    overflow: hidden;
+    transition: border-color 0.4s ease;
+  }
+
+  .form-wrapper:focus-within { border-color: var(--gold); }
+
+  .email-input {
+    flex: 1;
+    padding: 0.9rem 1.2rem;
+    background: transparent;
+    border: none;
+    color: var(--white);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    outline: none;
+  }
+
+  .email-input::placeholder {
+    color: rgba(208, 208, 208, 0.3);
+    letter-spacing: 0.08em;
+  }
+
+  .submit-btn {
+    padding: 0.9rem 1.6rem;
+    background: transparent;
+    border: none;
+    border-left: 1px solid rgba(198, 163, 78, 0.25);
+    color: var(--gold);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    white-space: nowrap;
+  }
+
+  .submit-btn:hover {
+    background: rgba(198, 163, 78, 0.08);
+    color: var(--gold-light);
+  }
+
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .form-message {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    min-height: 1.2rem;
+  }
+
+  .form-message.success { color: var(--gold); }
+  .form-message.error { color: #8B4444; }
+
+  /* ===== BOTTOM ===== */
+  .bottom-mark {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 200;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(136, 136, 136, 0.3);
+    opacity: 0;
+    animation: fadeIn 1.5s ease-out 3.4s forwards;
+    z-index: 1;
+  }
+
+  .bottom-mark a {
+    color: rgba(136, 136, 136, 0.3);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .bottom-mark a:hover { color: rgba(198, 163, 78, 0.4); }
+
+  /* Decorative lines */
+  .crack {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, rgba(198, 163, 78, 0.1), transparent);
+    opacity: 0;
+    animation: fadeIn 2s ease-out 3s forwards;
+    z-index: 1;
+  }
+
+  .crack-bottom {
+    top: auto;
+    bottom: 0;
+    background: linear-gradient(to top, transparent, rgba(198, 163, 78, 0.1), transparent);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 500px) {
+    .brand { letter-spacing: 0.25em; text-indent: 0.25em; }
+    .hero-video-frame { width: 92vw; }
+    .form-wrapper { flex-direction: column; }
+    .submit-btn {
+      border-left: none;
+      border-top: 1px solid rgba(198, 163, 78, 0.25);
+      padding: 1rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="crack"></div>
+<div class="crack crack-bottom"></div>
+
+<!-- HERO VIDEO -->
+<div class="hero-video-wrapper">
+  <div class="hero-video-frame">
+    <video class="hero-video" autoplay muted loop playsinline>
+      <source src="hlyful-hero.mp4" type="video/mp4">
+    </video>
+    <div class="hero-video-fade"></div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- BELL -->
+  <div class="bell-container bell-idle" id="bell">
+    <svg class="bell-svg" viewBox="0 0 50 65" xmlns="http://www.w3.org/2000/svg">
+      <!-- Ring -->
+      <circle cx="25" cy="5" r="3" class="bell-body" stroke-width="1"/>
+      <!-- Body -->
+      <path d="M25 8 L25 12 M15 12 Q15 12 13 30 Q11 42 8 48 L42 48 Q39 42 37 30 Q35 12 35 12 Z" class="bell-body"/>
+      <!-- Rim -->
+      <ellipse cx="25" cy="48" rx="17" ry="3" class="bell-body"/>
+      <!-- Clapper -->
+      <circle cx="25" cy="52" r="2.5" class="bell-clapper"/>
+      <!-- Crack -->
+      <path d="M22 20 L24 28 L21 35 L23 42" fill="none" stroke="var(--gold)" stroke-width="0.5" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <h1 class="brand">HLY FUL</h1>
+
+  <p class="tagline">Holy Fool. Heilig voll.</p>
+  <div class="tagline-divider"></div>
+
+  <p class="coming">Coming Soon</p>
+
+  <div class="form-container">
+    <form class="form-wrapper" id="newsletter-form" onsubmit="return handleSubmit(event)">
+      <input type="email" class="email-input" id="email-input" placeholder="Deine E-Mail" required autocomplete="email">
+      <button type="submit" class="submit-btn" id="submit-btn">Erfahre es zuerst</button>
+    </form>
+    <p class="form-message" id="form-message"></p>
+  </div>
+
+</div>
+
+<div class="bottom-mark">Wer hier landet, war nie verloren.</div>
+
+<script>
+const bell = document.getElementById('bell');
+
+function ringBell() {
+  bell.classList.remove('bell-idle');
+  bell.classList.add('bell-ringing');
+  // After ringing, return to idle
+  setTimeout(() => {
+    bell.classList.remove('bell-ringing');
+    bell.classList.add('bell-idle');
+  }, 2000);
+}
+
+async function handleSubmit(e) {
+  e.preventDefault();
+  const email = document.getElementById('email-input').value.trim();
+  const btn = document.getElementById('submit-btn');
+  const msg = document.getElementById('form-message');
+  if (!email) return;
+
+  btn.disabled = true;
+  btn.textContent = '...';
+  msg.textContent = '';
+  msg.className = 'form-message';
+
+  try {
+    const response = await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'api-key': 'DEIN_BREVO_API_KEY'
+      },
+      body: JSON.stringify({
+        email: email,
+        listIds: [DEINE_LIST_ID],
+        attributes: { BRAND: 'HLY FUL', SOURCE: 'coming-soon' },
+        updateEnabled: true
+      })
+    });
+
+    if (response.ok || response.status === 201 || response.status === 204) {
+      msg.textContent = 'Der Narr merkt sich das.';
+      msg.className = 'form-message success';
+      document.getElementById('email-input').value = '';
+      ringBell();
+    } else {
+      const data = await response.json();
+      if (data.code === 'duplicate_parameter') {
+        msg.textContent = 'Du bist bereits dabei.';
+        msg.className = 'form-message success';
+        ringBell();
+      } else { throw new Error(data.message || 'Fehler'); }
+    }
+  } catch (err) {
+    msg.textContent = 'Etwas ging schief. Versuch es nochmal.';
+    msg.className = 'form-message error';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Erfahre es zuerst';
+  }
+}
+</script>
+
+</body>
+</html>
