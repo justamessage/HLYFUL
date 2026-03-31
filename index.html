@@ -90,12 +90,13 @@
   /* ===== CONTENT ===== */
   .content {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 2.5rem 2rem 6rem;
+    padding: 1rem 2rem 6rem;
+    margin-top: -20px;
   }
 
   /* ===== BELL ===== */
@@ -107,16 +108,16 @@
   }
 
   .bell-svg {
-    width: 50px;
+    width: 90px;
     height: auto;
-    filter: drop-shadow(0 0 15px rgba(198, 163, 78, 0.15));
+    filter: drop-shadow(0 0 30px rgba(198, 163, 78, 0.35));
     transition: filter 0.3s ease;
   }
 
   .bell-svg .bell-body {
-    fill: none;
+    fill: rgba(198, 163, 78, 0.08);
     stroke: var(--gold);
-    stroke-width: 1.5;
+    stroke-width: 1.8;
   }
 
   .bell-svg .bell-clapper { fill: var(--gold); }
@@ -147,7 +148,7 @@
   }
 
   .bell-ringing .bell-svg {
-    filter: drop-shadow(0 0 25px rgba(198, 163, 78, 0.4));
+    filter: drop-shadow(0 0 40px rgba(198, 163, 78, 0.6));
   }
 
   /* ===== BRAND ===== */
@@ -159,8 +160,25 @@
     color: var(--white);
     margin-bottom: 1.5rem;
     opacity: 0;
-    animation: fadeUp 1.5s ease-out 1.4s forwards;
+    animation: fadeIn 0.5s ease-out 1.2s forwards;
     text-indent: 0.4em;
+    min-height: 1.2em;
+  }
+
+  .brand span {
+    display: inline-block;
+    min-width: 0.6em;
+    text-align: center;
+    color: rgba(198, 163, 78, 0.3);
+    transition: color 0.4s ease;
+  }
+
+  .brand span.decoded {
+    color: var(--white);
+  }
+
+  .brand span.space {
+    min-width: 0.35em;
   }
 
   .tagline {
@@ -353,20 +371,22 @@
   <!-- BELL -->
   <div class="bell-container bell-idle" id="bell">
     <svg class="bell-svg" viewBox="0 0 50 65" xmlns="http://www.w3.org/2000/svg">
-      <!-- Ring -->
-      <circle cx="25" cy="5" r="3" class="bell-body" stroke-width="1"/>
-      <!-- Body -->
-      <path d="M25 8 L25 12 M15 12 Q15 12 13 30 Q11 42 8 48 L42 48 Q39 42 37 30 Q35 12 35 12 Z" class="bell-body"/>
+      <!-- Suspension ring -->
+      <circle cx="25" cy="5" r="3" class="bell-body"/>
+      <!-- Stem -->
+      <line x1="25" y1="8" x2="25" y2="14" class="bell-body"/>
+      <!-- Bell body -->
+      <path d="M15 14 Q14 14 12 30 Q10 42 7 48 L43 48 Q40 42 38 30 Q36 14 35 14 Z" class="bell-body"/>
       <!-- Rim -->
-      <ellipse cx="25" cy="48" rx="17" ry="3" class="bell-body"/>
+      <ellipse cx="25" cy="48" rx="18" ry="3.5" class="bell-body"/>
       <!-- Clapper -->
-      <circle cx="25" cy="52" r="2.5" class="bell-clapper"/>
+      <circle cx="25" cy="53" r="3" class="bell-clapper"/>
       <!-- Crack -->
-      <path d="M22 20 L24 28 L21 35 L23 42" fill="none" stroke="var(--gold)" stroke-width="0.5" opacity="0.4"/>
+      <path d="M22 20 L24 28 L21 35 L23 43" fill="none" stroke="#C6A34E" stroke-width="0.7" opacity="0.5"/>
     </svg>
   </div>
 
-  <h1 class="brand">HLY FUL</h1>
+  <h1 class="brand" id="brand-text"></h1>
 
   <p class="tagline">Holy Fool. Heilig voll.</p>
   <div class="tagline-divider"></div>
@@ -391,12 +411,66 @@ const bell = document.getElementById('bell');
 function ringBell() {
   bell.classList.remove('bell-idle');
   bell.classList.add('bell-ringing');
-  // After ringing, return to idle
   setTimeout(() => {
     bell.classList.remove('bell-ringing');
     bell.classList.add('bell-idle');
   }, 2000);
 }
+
+// ===== SCRAMBLE DECODE =====
+(function() {
+  const target = 'HLY FUL';
+  const el = document.getElementById('brand-text');
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const scrambleSpeed = 55;       // ms between letter swaps
+  const startDelay = 1400;        // wait for fadeIn
+  const staggerPerChar = 400;     // ms delay between each char locking
+  const cyclesBeforeLock = 8;     // how many random letters before decode
+
+  // Build spans
+  const spans = [];
+  for (let i = 0; i < target.length; i++) {
+    const span = document.createElement('span');
+    if (target[i] === ' ') {
+      span.classList.add('space');
+      span.innerHTML = '&nbsp;';
+      span.dataset.done = 'true';
+    } else {
+      span.textContent = chars[Math.floor(Math.random() * chars.length)];
+      span.dataset.done = 'false';
+      span.dataset.target = target[i];
+      span.dataset.cycles = '0';
+    }
+    spans.push(span);
+    el.appendChild(span);
+  }
+
+  // Start scrambling after delay
+  setTimeout(() => {
+    const interval = setInterval(() => {
+      let allDone = true;
+
+      spans.forEach((span, i) => {
+        if (span.dataset.done === 'true') return;
+
+        const lockAfter = cyclesBeforeLock + Math.floor(i * (staggerPerChar / scrambleSpeed));
+        const cycles = parseInt(span.dataset.cycles) + 1;
+        span.dataset.cycles = cycles;
+
+        if (cycles >= lockAfter) {
+          span.textContent = span.dataset.target;
+          span.classList.add('decoded');
+          span.dataset.done = 'true';
+        } else {
+          span.textContent = chars[Math.floor(Math.random() * chars.length)];
+          allDone = false;
+        }
+      });
+
+      if (allDone) clearInterval(interval);
+    }, scrambleSpeed);
+  }, startDelay);
+})();
 
 async function handleSubmit(e) {
   e.preventDefault();
