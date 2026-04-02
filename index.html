@@ -367,36 +367,24 @@ function submit() {
   msg.textContent = '';
   msg.className = 'msg';
 
-  fetch('https://api.brevo.com/v3/contacts', {
+  fetch('/.netlify/functions/subscribe', {
     method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'api-key': 'DEIN_BREVO_API_KEY'
-    },
-    body: JSON.stringify({
-      email: email,
-      listIds: [DEINE_LIST_ID],
-      attributes: { BRAND: 'HLY FUL', SOURCE: 'coming-soon' },
-      updateEnabled: true
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
   })
-  .then(function(r) {
-    if (r.ok || r.status === 201 || r.status === 204) {
+  .then(function(r) { return r.json().then(function(d) { return { status: r.status, data: d }; }); })
+  .then(function(res) {
+    if (res.data.status === 'ok') {
       msg.textContent = 'Der Narr merkt sich das.';
       msg.className = 'msg ok';
       document.getElementById('email').value = '';
       ringTheBell();
+    } else if (res.data.status === 'duplicate') {
+      msg.textContent = 'Du bist bereits dabei.';
+      msg.className = 'msg ok';
+      ringTheBell();
     } else {
-      return r.json().then(function(d) {
-        if (d.code === 'duplicate_parameter') {
-          msg.textContent = 'Du bist bereits dabei.';
-          msg.className = 'msg ok';
-          ringTheBell();
-        } else {
-          throw new Error(d.message);
-        }
-      });
+      throw new Error(res.data.error || 'Fehler');
     }
   })
   .catch(function() {
