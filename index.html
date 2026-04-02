@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HLY FUL</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='4' r='2' fill='none' stroke='%23C6A34E' stroke-width='1.5'/%3E%3Crect x='15' y='6' width='2' height='4' fill='%23C6A34E'/%3E%3Cpolygon points='8,24 24,24 21,10 11,10' fill='%23C6A34E' opacity='0.3' stroke='%23C6A34E' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cellipse cx='16' cy='24' rx='8' ry='2' fill='%23C6A34E' opacity='0.3' stroke='%23C6A34E' stroke-width='1.5'/%3E%3Ccircle cx='16' cy='28' r='2' fill='%23C6A34E'/%3E%3C/svg%3E">
 <meta name="description" content="Holy Fool. Heilig voll.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,85 +19,161 @@ body {
   font-weight: 300;
   min-height: 100vh;
   overflow-x: hidden;
+  cursor: none;
 }
 
-/* ===== VIDEO ===== */
-.video-section {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 2rem 1rem 0;
-  opacity: 0;
-  animation: fadeIn 2s ease-out 0.3s forwards;
+/* Custom cursor */
+.cursor-dot {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  background: #C6A34E;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s;
+  mix-blend-mode: screen;
 }
 
-.video-frame {
+/* Particle canvas */
+#particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 998;
+}
+
+/* Grain overlay */
+.grain {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* ===== VIDEO — FULL WIDTH IMMERSIVE ===== */
+.hero {
   position: relative;
   width: 100%;
-  max-width: 540px;
+  max-height: 70vh;
   overflow: hidden;
-  border: 1px solid rgba(198,163,78,0.12);
+  opacity: 0;
+  animation: fadeIn 2.5s ease-out 0.2s forwards;
 }
 
-.video-frame video {
+.hero video {
   display: block;
   width: 100%;
   height: auto;
+  min-height: 300px;
+  object-fit: cover;
 }
 
-.video-fade {
+/* Vignette overlay on video */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, #0A0A0A 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Bottom fade */
+.hero::after {
+  content: '';
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: 60px;
+  height: 120px;
   background: linear-gradient(to bottom, transparent, #0A0A0A);
   pointer-events: none;
+  z-index: 1;
 }
 
-/* ===== MAIN CONTENT ===== */
-.main {
+/* Top fade */
+.hero-top-fade {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(to top, transparent, #0A0A0A);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== CONTENT ===== */
+.content {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 2rem 1.5rem 5rem;
+  padding: 1.5rem 1.5rem 3rem;
+  margin-top: -40px;
 }
 
-/* ===== BELL ===== */
+/* ===== BELL WITH PULSE ===== */
 .bell-wrap {
   margin-bottom: 2rem;
   opacity: 0;
   animation: fadeIn 2s ease-out 0.8s forwards;
+  position: relative;
 }
 
-#bell-element {
+/* Pulsing glow behind bell */
+.bell-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(198,163,78,0.15) 0%, transparent 70%);
+  animation: pulseGlow 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  50% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
+}
+
+#bell-el {
   display: block;
   width: 80px;
   height: 100px;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 12px rgba(198,163,78,0.3));
   transform-origin: top center;
   animation: sway 5s ease-in-out infinite;
 }
 
-#bell-element.ringing {
+#bell-el.ringing {
   animation: ring 0.25s ease-in-out 8 !important;
+  filter: drop-shadow(0 0 25px rgba(198,163,78,0.6)) !important;
 }
 
 @keyframes sway {
   0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(2.5deg); }
-  75% { transform: rotate(-2.5deg); }
+  25% { transform: rotate(2deg); }
+  75% { transform: rotate(-2deg); }
 }
 
 @keyframes ring {
   0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(15deg); }
-  75% { transform: rotate(-15deg); }
+  25% { transform: rotate(14deg); }
+  75% { transform: rotate(-14deg); }
 }
 
-/* ===== BRAND TEXT ===== */
+/* ===== BRAND ===== */
 .brand {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 300;
-  font-size: clamp(2.5rem, 12vw, 5.5rem);
+  font-size: clamp(2.5rem, 11vw, 5.5rem);
   letter-spacing: 0.3em;
   margin-bottom: 1.2rem;
   opacity: 0;
@@ -108,10 +185,9 @@ body {
   display: inline-block;
   min-width: 0.55em;
   text-align: center;
-  color: rgba(198,163,78,0.35);
-  transition: color 0.4s ease;
+  color: rgba(198,163,78,0.3);
+  transition: color 0.5s ease;
 }
-
 .brand span.done { color: #F0EDE6; }
 .brand span.gap { min-width: 0.3em; }
 
@@ -151,7 +227,7 @@ body {
 /* ===== FORM ===== */
 .form-box {
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   opacity: 0;
   animation: fadeUp 1.5s ease-out 2.8s forwards;
 }
@@ -166,6 +242,7 @@ body {
 
 .form-row input {
   flex: 1;
+  min-width: 0;
   padding: 0.85rem 1rem;
   background: transparent;
   border: none;
@@ -179,23 +256,24 @@ body {
 .form-row input::placeholder { color: rgba(208,208,208,0.25); }
 
 .form-row button {
-  padding: 0.85rem 1.2rem;
+  flex-shrink: 0;
+  padding: 0.85rem 1.4rem;
   background: transparent;
   border: none;
   border-left: 1px solid rgba(198,163,78,0.25);
   color: #C6A34E;
   font-family: 'Outfit', sans-serif;
   font-weight: 300;
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  cursor: pointer;
+  cursor: none;
   transition: background 0.3s ease;
   white-space: nowrap;
 }
 
 .form-row button:hover { background: rgba(198,163,78,0.08); }
-.form-row button:disabled { opacity: 0.4; cursor: not-allowed; }
+.form-row button:disabled { opacity: 0.4; }
 
 .msg {
   margin-top: 0.8rem;
@@ -203,7 +281,6 @@ body {
   letter-spacing: 0.08em;
   min-height: 1.2rem;
 }
-
 .msg.ok { color: #C6A34E; }
 .msg.err { color: #8B4444; }
 
@@ -211,14 +288,32 @@ body {
 .bottom {
   text-align: center;
   padding: 0 1rem 2.5rem;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: rgba(136,136,136,0.35);
+  color: rgba(136,136,136,0.3);
   font-weight: 200;
   opacity: 0;
   animation: fadeIn 1.5s ease-out 3.2s forwards;
 }
+
+/* Sound hint */
+.sound-hint {
+  position: fixed;
+  bottom: 1.2rem;
+  right: 1.2rem;
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(198,163,78,0.25);
+  z-index: 10;
+  cursor: none;
+  opacity: 0;
+  animation: fadeIn 1s ease-out 4s forwards;
+  transition: opacity 0.5s ease;
+}
+
+.sound-hint.hidden { opacity: 0 !important; }
 
 /* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
@@ -233,67 +328,75 @@ body {
 
 /* ===== MOBILE ===== */
 @media (max-width: 480px) {
-  .video-section { padding: 1rem 0 0; }
-  .video-frame { border: none; }
+  body { cursor: auto; }
+  .cursor-dot { display: none; }
+  .hero { max-height: 50vh; }
   .brand { letter-spacing: 0.2em; }
   .form-row { flex-direction: column; }
   .form-row button {
     border-left: none;
     border-top: 1px solid rgba(198,163,78,0.25);
     padding: 0.9rem;
+    cursor: auto;
   }
-  .main { padding: 1.5rem 1.2rem 4rem; }
+  .content { padding: 1rem 1.2rem 3rem; }
+  .sound-hint { display: none; }
+}
+
+@media (max-width: 380px) {
+  .brand { font-size: 2.2rem; letter-spacing: 0.15em; }
 }
 </style>
 </head>
 <body>
 
+<!-- Custom cursor -->
+<div class="cursor-dot" id="cursor"></div>
+
+<!-- Particle canvas -->
+<canvas id="particles"></canvas>
+
+<!-- Grain -->
+<div class="grain"></div>
+
+<!-- Sound hint -->
+<div class="sound-hint" id="sound-hint">♪ klick für klang</div>
+
 <!-- VIDEO -->
-<div class="video-section">
-  <div class="video-frame">
-    <video autoplay muted loop playsinline>
-      <source src="hlyful-hero.mp4" type="video/mp4">
-    </video>
-    <div class="video-fade"></div>
-  </div>
+<div class="hero">
+  <div class="hero-top-fade"></div>
+  <video autoplay muted loop playsinline>
+    <source src="hlyful-hero.mp4" type="video/mp4">
+  </video>
 </div>
 
-<!-- MAIN -->
-<div class="main">
+<!-- CONTENT -->
+<div class="content">
 
-  <!-- BELL — simple shapes only, inline colors, no CSS classes -->
+  <!-- BELL -->
   <div class="bell-wrap">
-    <svg id="bell-element" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
-      <!-- Hook at top -->
+    <div class="bell-glow"></div>
+    <svg id="bell-el" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
       <circle cx="40" cy="8" r="5" fill="none" stroke="#C6A34E" stroke-width="2"/>
-      <!-- Connector -->
       <rect x="38" y="13" width="4" height="10" rx="1" fill="#C6A34E"/>
-      <!-- Bell body — simple trapezoid shape -->
       <polygon points="20,70 60,70 52,23 28,23" fill="rgba(198,163,78,0.1)" stroke="#C6A34E" stroke-width="2" stroke-linejoin="round"/>
-      <!-- Rounded bottom of bell -->
       <ellipse cx="40" cy="70" rx="20" ry="5" fill="rgba(198,163,78,0.1)" stroke="#C6A34E" stroke-width="2"/>
-      <!-- Clapper rod -->
       <rect x="39" y="55" width="2" height="22" fill="#C6A34E"/>
-      <!-- Clapper ball -->
       <circle cx="40" cy="80" r="4" fill="#C6A34E"/>
-      <!-- Crack line -->
       <polyline points="36,32 38,42 34,52 37,62" fill="none" stroke="#C6A34E" stroke-width="0.8" opacity="0.35"/>
     </svg>
   </div>
 
-  <!-- BRAND -->
   <h1 class="brand" id="brand"></h1>
 
-  <!-- TAGLINE -->
   <p class="tagline">Holy Fool. Heilig voll.</p>
   <div class="divider"></div>
   <p class="coming">Coming Soon</p>
 
-  <!-- FORM -->
   <div class="form-box">
-    <div class="form-row" id="form">
+    <div class="form-row">
       <input type="email" id="email" placeholder="Deine E-Mail" required>
-      <button type="button" id="btn" onclick="submit()">Erfahre es zuerst</button>
+      <button type="button" id="btn" onclick="submitForm()">Erfahre es zuerst</button>
     </div>
     <p class="msg" id="msg"></p>
   </div>
@@ -303,7 +406,64 @@ body {
 <div class="bottom">Wer hier landet, war nie verloren.</div>
 
 <script>
-// ===== SCRAMBLE DECODE =====
+// ===========================
+// 1. CUSTOM CURSOR + PARTICLES
+// ===========================
+var mx = -100, my = -100;
+var cursorEl = document.getElementById('cursor');
+var canvas = document.getElementById('particles');
+var ctx = canvas.getContext('2d');
+var particles = [];
+var W, H;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+document.addEventListener('mousemove', function(e) {
+  mx = e.clientX;
+  my = e.clientY;
+  cursorEl.style.left = mx + 'px';
+  cursorEl.style.top = my + 'px';
+
+  // Spawn particles
+  if (Math.random() > 0.6) {
+    particles.push({
+      x: mx + (Math.random() - 0.5) * 20,
+      y: my + (Math.random() - 0.5) * 20,
+      r: Math.random() * 2.5 + 0.5,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: -Math.random() * 1 - 0.3,
+      life: 1,
+      decay: Math.random() * 0.015 + 0.008
+    });
+  }
+});
+
+function drawParticles() {
+  ctx.clearRect(0, 0, W, H);
+  for (var i = particles.length - 1; i >= 0; i--) {
+    var p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life -= p.decay;
+    if (p.life <= 0) { particles.splice(i, 1); continue; }
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(198,163,78,' + (p.life * 0.5) + ')';
+    ctx.fill();
+  }
+  if (particles.length > 80) particles.splice(0, particles.length - 80);
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// ===========================
+// 2. SCRAMBLE DECODE
+// ===========================
 (function(){
   var word = 'HLY FUL';
   var el = document.getElementById('brand');
@@ -348,19 +508,123 @@ body {
   }, 1400);
 })();
 
-// ===== BELL RING =====
-function ringTheBell() {
-  var b = document.getElementById('bell-element');
-  b.classList.add('ringing');
-  setTimeout(function(){ b.classList.remove('ringing'); }, 2200);
+// ===========================
+// 3. AUDIO — REALISTIC BELLS
+// ===========================
+var audioCtx = null;
+var ambientPlayed = false;
+
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
-// ===== FORM SUBMIT =====
-function submit() {
+// Strike a single bell with realistic partials
+function strikeBell(fundamental, volume, duration) {
+  initAudio();
+  var now = audioCtx.currentTime;
+
+  // Real bell partial ratios (inharmonic — this is what makes bells sound like bells)
+  var partials = [
+    { ratio: 0.5,  amp: 0.6,  decay: duration * 1.2 },  // Hum
+    { ratio: 1.0,  amp: 1.0,  decay: duration },          // Fundamental
+    { ratio: 1.19, amp: 0.55, decay: duration * 0.85 },   // Minor third
+    { ratio: 1.56, amp: 0.35, decay: duration * 0.7 },    // Fifth
+    { ratio: 2.0,  amp: 0.25, decay: duration * 0.55 },   // Octave
+    { ratio: 2.51, amp: 0.1,  decay: duration * 0.4 },    // Upper
+    { ratio: 3.01, amp: 0.06, decay: duration * 0.3 }     // Shimmer
+  ];
+
+  // Master gain
+  var master = audioCtx.createGain();
+  master.gain.value = volume;
+  master.connect(audioCtx.destination);
+
+  partials.forEach(function(p) {
+    var osc = audioCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = fundamental * p.ratio;
+
+    // Slight detune for warmth
+    osc.detune.value = (Math.random() - 0.5) * 6;
+
+    var env = audioCtx.createGain();
+    // Sharp attack, long decay
+    env.gain.setValueAtTime(p.amp, now);
+    env.gain.setValueAtTime(p.amp * 0.7, now + 0.01);
+    env.gain.exponentialRampToValueAtTime(0.001, now + p.decay);
+
+    osc.connect(env);
+    env.connect(master);
+    osc.start(now);
+    osc.stop(now + p.decay + 0.1);
+  });
+
+  // Add a subtle "knock" — the initial strike transient
+  var noise = audioCtx.createOscillator();
+  noise.type = 'triangle';
+  noise.frequency.value = fundamental * 4;
+  var noiseEnv = audioCtx.createGain();
+  noiseEnv.gain.setValueAtTime(volume * 0.3, now);
+  noiseEnv.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+  noise.connect(noiseEnv);
+  noiseEnv.connect(master);
+  noise.start(now);
+  noise.stop(now + 0.1);
+}
+
+// Ambient — a single deep, distant bell toll on first interaction
+function playAmbientBell() {
+  if (ambientPlayed) return;
+  ambientPlayed = true;
+
+  var hint = document.getElementById('sound-hint');
+  if (hint) hint.classList.add('hidden');
+
+  // Deep bell, quiet, long reverb — like hearing a church bell from far away
+  strikeBell(120, 0.06, 6);
+}
+
+// Signup bell — brighter, closer, celebratory
+function playSignupBell() {
+  initAudio();
+  // First strike
+  strikeBell(440, 0.12, 3.5);
+  // Second strike slightly higher, delayed
+  setTimeout(function() {
+    strikeBell(523, 0.08, 3);
+  }, 500);
+  // Third — gentle high ring
+  setTimeout(function() {
+    strikeBell(660, 0.05, 2.5);
+  }, 900);
+}
+
+// Start ambient on first interaction
+document.addEventListener('click', function() { playAmbientBell(); }, { once: true });
+document.addEventListener('touchstart', function() { playAmbientBell(); }, { once: true });
+
+// ===========================
+// 4. BELL RING
+// ===========================
+function ringBell() {
+  var b = document.getElementById('bell-el');
+  b.classList.add('ringing');
+  playSignupBell();
+  setTimeout(function() { b.classList.remove('ringing'); }, 2200);
+}
+
+// ===========================
+// 5. FORM SUBMIT
+// ===========================
+function submitForm() {
   var email = document.getElementById('email').value.trim();
   var btn = document.getElementById('btn');
   var msg = document.getElementById('msg');
   if (!email) return;
+
+  // Start ambient if not yet
+  playAmbientBell();
 
   btn.disabled = true;
   btn.textContent = '...';
@@ -378,11 +642,11 @@ function submit() {
       msg.textContent = 'Der Narr merkt sich das.';
       msg.className = 'msg ok';
       document.getElementById('email').value = '';
-      ringTheBell();
+      ringBell();
     } else if (res.data.status === 'duplicate') {
       msg.textContent = 'Du bist bereits dabei.';
       msg.className = 'msg ok';
-      ringTheBell();
+      ringBell();
     } else {
       throw new Error(res.data.error || 'Fehler');
     }
