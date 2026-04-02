@@ -1,10 +1,10 @@
+const https = require('https');
+
 exports.handler = async function(event) {
-  // Only allow POST
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  // Parse email from request
   let email;
   try {
     const data = JSON.parse(event.body);
@@ -17,7 +17,6 @@ exports.handler = async function(event) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Email required' }) };
   }
 
-  // API key and list ID from Netlify environment variables
   const API_KEY = process.env.BREVO_API_KEY;
   const LIST_ID = parseInt(process.env.BREVO_LIST_ID);
 
@@ -25,47 +24,67 @@ exports.handler = async function(event) {
     return { statusCode: 500, body: JSON.stringify({ error: 'Server config missing' }) };
   }
 
-  try {
-    const response = await fetch('https://api.brevo.com/v3/contacts', {
+  const payload = JSON.stringify({
+    email: email,
+    listIds: [LIST_ID],
+    attributes: { BRAND: 'HLY FUL', SOURCE: 'coming-soon' },
+    updateEnabled: true
+  });
+
+  return new Promise(function(resolve) {
+    const options = {
+      hostname: 'api.brevo.com',
+      path: '/v3/contacts',
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'api-key': API_KEY
-      },
-      body: JSON.stringify({
-        email: email,
-        listIds: [LIST_ID],
-        attributes: { BRAND: 'HLY FUL', SOURCE: 'coming-soon' },
-        updateEnabled: true
-      })
+        'api-key': API_KEY,
+        'Content-Length': Buffer.byteLength(payload)
+      }
+    };
+
+    const req = https.request(options, function(res) {
+      let body = '';
+      res.on('data', function(chunk) { body += chunk; });
+      res.on('end', function() {
+        if (res.statusCode === 200 || res.statusCode === 201 || res.statusCode === 204) {
+          resolve({
+            statusCode: 200,
+            body: JSON.stringify({ status: 'ok' })
+          });
+        } else {
+          try {
+            const parsed = JSON.parse(body);
+            if (parsed.code === 'duplicate_parameter') {
+              resolve({
+                statusCode: 200,
+                body: JSON.stringify({ status: 'duplicate' })
+              });
+            } else {
+              resolve({
+                statusCode: res.statusCode,
+                body: JSON.stringify({ error: parsed.message || 'Brevo error' })
+              });
+            }
+          } catch (e) {
+            resolve({
+              statusCode: 500,
+              body: JSON.stringify({ error: 'Parse error' })
+            });
+          }
+        }
+      });
     });
 
-    if (response.ok || response.status === 201 || response.status === 204) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ status: 'ok' })
-      };
-    }
+    req.on('error', function(err) {
+      resolve({
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Request failed: ' + err.message })
+      });
+    });
 
-    const result = await response.json();
-
-    if (result.code === 'duplicate_parameter') {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ status: 'duplicate' })
-      };
-    }
-
-    return {
-      statusCode: response.status,
-      body: JSON.stringify({ error: result.message || 'Brevo error' })
-    };
-
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Server error' })
-    };
-  }
+    req.write(payload);
+    req.end();
+  });
 };
